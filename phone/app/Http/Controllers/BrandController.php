@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Brand;
 use Illuminate\Http\Request;
 
 class BrandController extends Controller
@@ -13,7 +14,11 @@ class BrandController extends Controller
      */
     public function index()
     {
-        //
+        $brands = Brand::orderBy('id','asc')
+            ->where('bname','like', '%'.request()->keywords.'%')
+            ->get();
+        //解析模板显示用户数据
+        return view('admin.brand.index', ['brands'=>$brands]);
     }
 
     /**
@@ -23,7 +28,7 @@ class BrandController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.brand.create');
     }
 
     /**
@@ -34,7 +39,15 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $brands = new Brand;
+
+        $brands -> bname = $request->bname;
+
+        if($brands -> save()){
+            return redirect('/brand')->with('success', '添加成功');
+        }else{
+            return back()->with('error','添加失败');
+        }
     }
 
     /**
@@ -56,7 +69,9 @@ class BrandController extends Controller
      */
     public function edit($id)
     {
-        //
+        $brands = Brand::findOrFail($id);
+
+        return view('admin.brand.edit', ['brands'=>$brands]);
     }
 
     /**
@@ -68,7 +83,15 @@ class BrandController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $brands = Brand::findOrFail($id);
+        
+        $brands -> bname = $request ->bname;
+
+        if($brands -> save()){
+            return redirect('/brand')->with('success', '更新成功');
+        }else{
+            return back()->with('error','更新失败');
+        }    
     }
 
     /**
@@ -79,6 +102,12 @@ class BrandController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $brands = Brand::findOrFail($id);
+
+        if($brands -> delete()){
+            return redirect('/brand')->with('success', '删除成功');
+        }else{
+            return back()->with('error','删除失败');
+        } 
     }
 }

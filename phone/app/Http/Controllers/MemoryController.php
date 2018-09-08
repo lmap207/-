@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Memory;
 use Illuminate\Http\Request;
 
 class MemoryController extends Controller
@@ -13,7 +14,12 @@ class MemoryController extends Controller
      */
     public function index()
     {
-        //
+        //读取数据库 获取用户数据
+        $memorys = Memory::orderBy('id','desc')
+            ->where('mname','like', '%'.request()->keywords.'%')
+            ->get();
+        //解析模板显示用户数据
+        return view('admin.memory.index', ['memorys'=>$memorys]);
     }
 
     /**
@@ -23,7 +29,7 @@ class MemoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.memory.create');
     }
 
     /**
@@ -34,7 +40,15 @@ class MemoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $memory = new Memory;
+
+        $memory -> mname = $request->mname;
+
+        if($memory -> save()){
+            return redirect('/memory')->with('success', '添加成功');
+        }else{
+            return back()->with('error','添加失败');
+        }
     }
 
     /**
@@ -56,7 +70,9 @@ class MemoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        $memorys = Memory::findOrFail($id);
+
+        return view('admin.memory.edit', ['memorys'=>$memorys]);
     }
 
     /**
@@ -68,7 +84,15 @@ class MemoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $memorys = Memory::findOrFail($id);
+        
+        $memorys -> mname = $request -> mname;
+
+        if($memorys -> save()){
+            return redirect('/memory')->with('success', '更新成功');
+        }else{
+            return back()->with('error','更新失败');
+        }    
     }
 
     /**
@@ -79,6 +103,12 @@ class MemoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $memorys = Memory::findOrFail($id);
+
+        if($memorys -> delete()){
+            return redirect('/memory')->with('success', '删除成功');
+        }else{
+            return back()->with('error','删除失败');
+        } 
     }
 }
