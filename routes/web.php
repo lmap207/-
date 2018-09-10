@@ -43,3 +43,14 @@ Route::resource('memory', 'MemoryController');
 //详情页
 Route::get('/{id}.html', 'PhoneController@show');
 
+//注册
+Route::get('/home/zc','ZhuceController@zhuce');
+//验证注册
+Route::post('/home/zhuce','ZhuceController@store');
+
+//登录
+Route::get('/home/denglu','ZhuceController@denglu');
+Route::get('/captcha/{tmp}','ZhuceController@captcha');
+
+//验证登录
+Route::post('/home/denglu','ZhuceController@store');
